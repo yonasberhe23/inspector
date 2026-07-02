@@ -1,0 +1,43 @@
+name: Jenkins CI Failure Inspection
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run — print failures without creating issues'
+        required: false
+        default: 'false'
+        type: boolean
+
+jobs:
+  inspect:
+    name: Inspect CI failures and create issues
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Run CI inspection
+        env:
+          GITHUB_TOKEN: ${{ secrets.INSPECTOR_GITHUB_TOKEN }}
+          JENKINS_AUTH: ${{ secrets.INSPECTOR_JENKINS_AUTH }}
+          JENKINS_BASE_URL: ${{ secrets.INSPECTOR_JENKINS_BASE_URL }}
+          JENKINS_JOB_PATH: ${{ vars.INSPECTOR_JENKINS_JOB_PATH }}
+          GITHUB_ORG: ${{ vars.INSPECTOR_GITHUB_ORG }}
+          GITHUB_REPO: ${{ vars.INSPECTOR_GITHUB_REPO }}
+          GITHUB_PROJECT_NUMBER: ${{ vars.INSPECTOR_PROJECT_NUMBER }}
+          GITHUB_PROJECT_OWNER: ${{ vars.INSPECTOR_PROJECT_OWNER }}
+          GITHUB_ISSUE_LABELS: ${{ vars.INSPECTOR_ISSUE_LABELS }}
+          STATUS_FIELD_ID: ${{ vars.INSPECTOR_STATUS_FIELD_ID }}
+          BACKLOG_OPTION_ID: ${{ vars.INSPECTOR_BACKLOG_OPTION_ID }}
+          DRY_RUN: ${{ inputs.dry_run || 'false' }}
+        run: node src/inspect.js

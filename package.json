@@ -1,0 +1,18 @@
+{
+  "name": "ci-failure-inspector",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Automated CI failure inspection — queries Jenkins builds and creates GitHub issues",
+  "main": "src/inspect.js",
+  "keywords": [
+    "jenkins",
+    "qa",
+    "automation"
+  ],
+  "author": "QA Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=24.0.0"
+  }
+}
+
